@@ -14,14 +14,15 @@ enum sc_status
   LOX_SC_FAIL_REALLOC
 };
 
-static bool sc_is_at_end (struct sc *sc);
+static bool sc_is_at_end (const struct sc *sc);
 static void sc_scan_token (struct sc *sc);
 static char sc_advance (struct sc *sc);
 static void sc_add_token (struct sc *sc, enum token_type type, void *literal);
 static void sc_add_token_string (struct sc *sc);
 static void sc_add_token_number (struct sc *sc);
 static bool sc_match (struct sc *sc, const char expected);
-static char sc_peek (struct sc *sc);
+static char sc_peek (const struct sc *sc);
+static char sc_peek_next (const struct sc *sc);
 
 static bool sc_is_digit (const char c);
 static enum sc_status sc_tokens_append (struct sc *sc, enum token_type type,
@@ -35,9 +36,9 @@ sc_get_scanner (const char *source)
                       .tokens = NULL,
                       .num_tokens = 0,
                       .cap_tokens = 0,
-                      .start = 0,
+                      .token_start = 0,
                       .current = 0,
-                      .line = 1 };
+                      .current_line = 1 };
 }
 
 struct token *
@@ -45,7 +46,7 @@ sc_scan_tokens (struct sc *sc)
 {
   while (!sc_is_at_end (sc))
     {
-      sc->start = sc->current;
+      sc->token_start = sc->current;
       sc_scan_token (sc);
     }
 
@@ -53,7 +54,7 @@ sc_scan_tokens (struct sc *sc)
 }
 
 bool
-sc_is_at_end (struct sc *sc)
+sc_is_at_end (const struct sc *sc)
 {
   return sc->current >= sc->source_len;
 }
@@ -130,7 +131,7 @@ sc_scan_token (struct sc *sc)
       break;
 
     case '\n':
-      sc->line++;
+      sc->current_line++;
       break;
 
     case '"':
@@ -151,7 +152,7 @@ sc_scan_token (struct sc *sc)
       break;
 
     default:
-      lox_error (sc->line, "Unexpected character: '%c'\n", c);
+      lox_error (sc->current_line, "Unexpected character: '%c'\n", c);
       break;
     }
 }
@@ -165,9 +166,9 @@ sc_advance (struct sc *sc)
 void
 sc_add_token (struct sc *sc, enum token_type type, void *literal)
 {
-  size_t len = sc->current - sc->start;
+  size_t len = sc->current - sc->token_start;
   char *text = malloc (len + 1);
-  memcpy (text, sc->source + sc->start, len);
+  memcpy (text, sc->source + sc->token_start, len);
   text[len] = 0;
 
   if (LOX_SC_OK != sc_tokens_append (sc, type, text, literal))
@@ -181,12 +182,27 @@ sc_free_tokens (struct sc *sc)
 {
   for (size_t i = 0; i < sc->num_tokens; ++i)
     {
-      printf ("%s\n", sc->tokens[i].lexeme);
+      printf ("%s", sc->tokens[i].lexeme);
+      if (sc->tokens[i].type == LT_NUMBER)
+        {
+          printf (", which is %.2f\n", *(double *)sc->tokens[i].literal);
+        }
+      else
+        {
+          puts ("");
+        }
     }
 
   for (size_t i = 0; i < sc->num_tokens; ++i)
     {
-      free (sc->tokens[i].lexeme);
+      if (NULL != sc->tokens[i].lexeme)
+        {
+          free (sc->tokens[i].lexeme);
+        }
+      if (NULL != sc->tokens[i].literal)
+        {
+          free (sc->tokens[i].literal);
+        }
     }
   free (sc->tokens);
   sc->tokens = NULL;
@@ -209,13 +225,23 @@ sc_match (struct sc *sc, const char expected)
 }
 
 char
-sc_peek (struct sc *sc)
+sc_peek (const struct sc *sc)
 {
   if (sc_is_at_end (sc))
     {
       return 0;
     }
   return sc->source[sc->current];
+}
+
+char
+sc_peek_next (const struct sc *sc)
+{
+  if (sc->current + 1 >= sc->source_len)
+    {
+      return 0;
+    }
+  return sc->source[sc->current + 1];
 }
 
 void
@@ -225,22 +251,22 @@ sc_add_token_string (struct sc *sc)
     {
       if (sc_peek (sc) == '\n')
         {
-          sc->line++;
+          sc->current_line++;
         }
       sc_advance (sc);
     }
 
   if (sc_is_at_end (sc))
     {
-      lox_error (sc->line, "Unterminated string\n");
+      lox_error (sc->current_line, "Unterminated string\n");
       return;
     }
 
   sc_advance (sc);
 
-  size_t text_len = sc->current - sc->start - 2;
+  size_t text_len = sc->current - sc->token_start - 2;
   char *text = malloc (sizeof *text * (text_len + 1));
-  memcpy (text, sc->source + (sc->start + 1), text_len);
+  memcpy (text, sc->source + (sc->token_start + 1), text_len);
   text[text_len] = 0;
 
   sc_tokens_append (sc, LT_STRING, text, NULL);
@@ -254,7 +280,7 @@ sc_add_token_number (struct sc *sc)
       sc_advance (sc);
     }
 
-  if (sc_peek (sc) == '.')
+  if (sc_peek (sc) == '.' && sc_is_digit (sc_peek_next (sc)))
     {
       sc_advance (sc);
       while (sc_is_digit (sc_peek (sc)))
@@ -263,25 +289,27 @@ sc_add_token_number (struct sc *sc)
         }
     }
 
-  size_t text_len = sc->current - sc->start;
+  size_t text_len = sc->current - sc->token_start;
   char *text = malloc (sizeof *text * (text_len + 1));
-  memcpy (text, sc->source + sc->start, text_len);
+  memcpy (text, sc->source + sc->token_start, text_len);
   text[text_len] = 0;
 
+  double *pnum = malloc (sizeof *pnum);
   char *endptr = NULL;
-  double num = strtod (text, &endptr);
+  *pnum = strtod (text, &endptr);
   if (endptr != text + text_len)
     {
-      lox_error (sc->line, "Failed to parse number: %s\n", num);
+      lox_error (sc->current_line, "Failed to parse number: %s\n", *pnum);
       return;
     }
   if (errno == ERANGE)
     {
-      lox_error (sc->line, "Number value overflowed: saw %s, got %f\n", text,
-                 num);
+      lox_error (sc->current_line, "Number value overflowed: saw %s, got %f\n",
+                 text, *pnum);
       errno = 0;
       return;
     }
+  sc_tokens_append (sc, LT_NUMBER, text, pnum);
 }
 
 enum sc_status
@@ -293,7 +321,6 @@ sc_tokens_append (struct sc *sc, enum token_type type, char *text,
   if (sc->cap_tokens < num_tokens)
     {
       size_t cap_tokens = num_tokens * 2;
-      fputs ("hello\n", stdout);
       sc->tokens = realloc (sc->tokens, sizeof *sc->tokens * cap_tokens);
       if (sc->tokens == NULL)
         {
@@ -305,7 +332,7 @@ sc_tokens_append (struct sc *sc, enum token_type type, char *text,
 
   sc->num_tokens = num_tokens;
   sc->tokens[sc->num_tokens - 1]
-      = token_get_token (type, text, literal, sc->line);
+      = token_get_token (type, text, literal, sc->current_line);
 
   return LOX_SC_OK;
 }

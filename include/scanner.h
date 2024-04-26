@@ -14,9 +14,9 @@ struct sc
   size_t num_tokens;
   size_t cap_tokens;
 
-  size_t start;
+  size_t token_start;
   size_t current;
-  int line;
+  int current_line;
 };
 
 struct sc sc_get_scanner (const char *source);
