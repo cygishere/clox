@@ -1,0 +1,15 @@
+#+TITLE: clox - A Lox Implementation in C
+* Description
+This is an educational project aimed at learning interpreter development, following the book [[https://craftinginterpreters.com][Crafting Interpreters]].
+* Usage
+#+begin_src sh
+$ clox [lox_source_file]
+#+end_src
+* How to Build
+** Using CMake
+#+begin_src sh
+$ mkdir your_build_dir
+$ cd your_build_dir
+$ cmake your_source_dir/clox
+$ cmake --build .
+#+end_src
