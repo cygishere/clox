@@ -1,6 +1,7 @@
 #include "hash.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@ size_t pairs_cur;
 
 unsigned print_word_hash (const char *word);
 void assert_conflict (const char *word);
+void print_enums (void);
 
 int
 main (void)
@@ -44,6 +46,10 @@ main (void)
   assert_conflict ("true");
   assert_conflict ("var");
   assert_conflict ("while");
+
+  puts ("");
+
+  print_enums ();
 
   free (pairs);
 }
@@ -75,15 +81,30 @@ assert_conflict (const char *word)
           printf ("Hash conflict detected: %s and %s\n", word, pairs[i].word);
           exit (1);
         }
+    }
 
-      if (pairs_cur + 1 > pairs_cap - 1)
+  if (pairs_cur + 1 > pairs_cap - 1)
+    {
+      pairs_cap *= 2;
+      pairs = realloc (pairs, sizeof *pairs * pairs_cap);
+    }
+
+  pairs[pairs_cur].hash = hash;
+  pairs[pairs_cur].word = word;
+  pairs_cur++;
+}
+
+void
+print_enums (void)
+{
+  for (size_t i = 0; i < pairs_cur; ++i)
+    {
+      printf ("LT_");
+      /* printf ("%s\n", pairs[i].word); */
+      for (const char *j = pairs[i].word; *j; ++j)
         {
-          pairs_cap *= 2;
-          pairs = realloc (pairs, sizeof *pairs * pairs_cap);
+          printf ("%c", toupper (*j));
         }
-
-      pairs_cur++;
-      pairs[pairs_cur].hash = hash;
-      pairs[pairs_cur].word = word;
+      printf (" = 0x%x,\n", pairs[i].hash);
     }
 }
