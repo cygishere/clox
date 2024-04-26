@@ -12,7 +12,7 @@
 /*
  * This hash function is copied from https://stackoverflow.com/a/626599
  */
-unsigned
+int
 lox_fnv (const char *key, size_t len)
 {
   const unsigned char *p = (const unsigned char *)key;

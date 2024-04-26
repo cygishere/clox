@@ -10,7 +10,7 @@
 struct pair
 {
   const char *word;
-  unsigned hash;
+  int hash;
 };
 
 /*
@@ -22,7 +22,7 @@ struct pair *pairs;
 size_t pairs_cap;
 size_t pairs_cur;
 
-unsigned print_word_hash (const char *word);
+int print_word_hash (const char *word);
 void assert_conflict (const char *word);
 void print_enums (void);
 
@@ -54,11 +54,11 @@ main (void)
   free (pairs);
 }
 
-unsigned
+int
 print_word_hash (const char *word)
 {
-  unsigned hash = lox_fnv (word, strlen (word));
-  printf ("\"%s\": 0x%x\n", word, hash);
+  int hash = lox_fnv (word, strlen (word));
+  printf ("\"%s\": %d\n", word, hash);
   return hash;
 }
 
@@ -73,7 +73,7 @@ assert_conflict (const char *word)
       pairs_cur = 0;
     }
 
-  unsigned hash = print_word_hash (word);
+  int hash = print_word_hash (word);
   for (size_t i = 0; i < pairs_cur; ++i)
     {
       if (hash == pairs[i].hash)
@@ -105,6 +105,6 @@ print_enums (void)
         {
           printf ("%c", toupper (*j));
         }
-      printf (" = 0x%x,\n", pairs[i].hash);
+      printf (" = %d,\n", pairs[i].hash);
     }
 }
