@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "hash.h"
 #include "lox.h"
 #include "token_type.h"
 
@@ -20,11 +21,13 @@ static char sc_advance (struct sc *sc);
 static void sc_add_token (struct sc *sc, enum token_type type, void *literal);
 static void sc_add_token_string (struct sc *sc);
 static void sc_add_token_number (struct sc *sc);
+static void sc_add_token_identifier (struct sc *sc);
 static bool sc_match (struct sc *sc, const char expected);
 static char sc_peek (const struct sc *sc);
 static char sc_peek_next (const struct sc *sc);
 
 static bool sc_is_digit (const char c);
+static bool sc_is_alpha (const char c);
 static enum sc_status sc_tokens_append (struct sc *sc, enum token_type type,
                                         char *text, void *literal);
 
@@ -152,7 +155,14 @@ sc_scan_token (struct sc *sc)
       break;
 
     default:
-      lox_error (sc->current_line, "Unexpected character: '%c'\n", c);
+      if (sc_is_alpha (c))
+        {
+          sc_add_token_identifier (sc);
+        }
+      else
+        {
+          lox_error (sc->current_line, "Unexpected character: '%c'\n", c);
+        }
       break;
     }
 }
@@ -182,14 +192,36 @@ sc_free_tokens (struct sc *sc)
 {
   for (size_t i = 0; i < sc->num_tokens; ++i)
     {
-      printf ("%s", sc->tokens[i].lexeme);
-      if (sc->tokens[i].type == LT_NUMBER)
+      printf ("token %zu: %s, ", i, sc->tokens[i].lexeme);
+      switch (sc->tokens[i].type)
         {
-          printf (", which is %.2f\n", *(double *)sc->tokens[i].literal);
-        }
-      else
-        {
+        case LT_NUMBER:
+          printf ("number = %.2f\n", *(double *)sc->tokens[i].literal);
+          break;
+        case LT_AND:
+        case LT_CLASS:
+        case LT_ELSE:
+        case LT_FALSE:
+        case LT_FOR:
+        case LT_FUN:
+        case LT_IF:
+        case LT_NIL:
+        case LT_OR:
+        case LT_PRINT:
+        case LT_RETURN:
+        case LT_SUPER:
+        case LT_THIS:
+        case LT_TRUE:
+        case LT_VAR:
+        case LT_WHILE:
+          printf ("keyword\n");
+          break;
+        case LT_IDENTIFIER:
+          printf ("identifier\n");
+          break;
+        default:
           puts ("");
+          break;
         }
     }
 
@@ -312,6 +344,46 @@ sc_add_token_number (struct sc *sc)
   sc_tokens_append (sc, LT_NUMBER, text, pnum);
 }
 
+void
+sc_add_token_identifier (struct sc *sc)
+{
+  while (sc_is_alpha (sc_peek (sc)))
+    {
+      sc_advance (sc);
+    }
+
+  size_t text_len = sc->current - sc->token_start;
+  char *text = malloc (sizeof *text * (text_len + 1));
+  memcpy (text, sc->source + sc->token_start, text_len);
+  text[text_len] = 0;
+
+  unsigned hash = lox_fnv (text, text_len);
+  switch (hash)
+    {
+    case LT_AND:
+    case LT_CLASS:
+    case LT_ELSE:
+    case LT_FALSE:
+    case LT_FOR:
+    case LT_FUN:
+    case LT_IF:
+    case LT_NIL:
+    case LT_OR:
+    case LT_PRINT:
+    case LT_RETURN:
+    case LT_SUPER:
+    case LT_THIS:
+    case LT_TRUE:
+    case LT_VAR:
+    case LT_WHILE:
+      sc_tokens_append (sc, hash, text, NULL);
+      break;
+    default:
+      sc_tokens_append (sc, LT_IDENTIFIER, text, NULL);
+      break;
+    }
+}
+
 enum sc_status
 sc_tokens_append (struct sc *sc, enum token_type type, char *text,
                   void *literal)
@@ -341,4 +413,10 @@ bool
 sc_is_digit (const char c)
 {
   return (c >= '0' && c <= '9');
+}
+
+bool
+sc_is_alpha (const char c)
+{
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
