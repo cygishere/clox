@@ -1,5 +1,6 @@
 #+TITLE: clox - A Lox Implementation in C
 * Description
+🚧Work in Progress🚧
 This is an educational project aimed at learning interpreter development, following the book [[https://craftinginterpreters.com][Crafting Interpreters]].
 * Usage
 #+begin_src sh
