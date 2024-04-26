@@ -7,7 +7,10 @@ $ clox [lox_source_file]
 #+end_src
 * How to Build
 ** Using CMake
+Make sure you have git, cmake, and c compile suite installed.
 #+begin_src sh
+$ cd your_source_dir
+$ git clone https://github.com/cygishere/clox.git
 $ mkdir your_build_dir
 $ cd your_build_dir
 $ cmake your_source_dir/clox
