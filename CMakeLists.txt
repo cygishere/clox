@@ -30,3 +30,15 @@ target_include_directories(
   clox
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+
+# Tools
+add_executable(
+  hashgen
+  EXCLUDE_FROM_ALL
+  tool/hashgen/hashgen.c)
+
+target_include_directories(
+  hashgen
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
