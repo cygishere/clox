@@ -8,11 +8,16 @@ project(
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_compile_options(-fsanitize=address,leak,undefined)
+option(LOX_ENABLE_SANITISERS "Enable sanitisers" OFF)
+
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-pedantic)
-add_link_options(-fsanitize=address,leak,undefined)
+
+if(LOX_ENABLE_SANITISERS)
+  add_compile_options(-fsanitize=address,leak,undefined)
+  add_link_options(-fsanitize=address,leak,undefined)
+endif()
 
 add_executable(
   clox
