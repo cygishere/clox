@@ -13,6 +13,7 @@ option(LOX_ENABLE_SANITISERS "Enable sanitisers" OFF)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-pedantic)
+add_compile_options(-g)
 
 if(LOX_ENABLE_SANITISERS)
   add_compile_options(-fsanitize=address,leak,undefined)
