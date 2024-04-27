@@ -42,3 +42,16 @@ target_include_directories(
   hashgen
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Tests
+add_executable(
+  test_ast_print
+  EXCLUDE_FROM_ALL
+  test/ast_print/test.c
+  src/ast_print.c
+  src/token.c)
+
+target_include_directories(
+  test_ast_print
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
