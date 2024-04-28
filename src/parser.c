@@ -51,10 +51,9 @@ ps_equality (struct ps *ps)
 {
   union expr *e = ps_comparison (ps);
 
-  bool keep_going = true;
-  while (keep_going)
+  while (true)
     {
-      switch (ps->tokens[ps->current].type)
+      switch (ps_peek_cur (ps)->type)
         {
         case LT_BANG_EQUAL:
         case LT_EQUAL_EQUAL:
@@ -72,12 +71,9 @@ ps_equality (struct ps *ps)
           }
           break;
         default:
-          keep_going = false;
-          break;
+          return e;
         }
     }
-
-  return e;
 }
 
 /**
@@ -88,8 +84,7 @@ ps_comparison (struct ps *ps)
 {
   union expr *e = ps_term (ps);
 
-  bool keep_going = true;
-  while (keep_going)
+  while (true)
     {
       switch (ps->tokens[ps->current].type)
         {
@@ -112,12 +107,9 @@ ps_comparison (struct ps *ps)
           }
           break;
         default:
-          keep_going = false;
-          break;
+          return e;
         }
     }
-
-  return e;
 }
 
 /**
@@ -128,10 +120,9 @@ ps_term (struct ps *ps)
 {
   union expr *e = ps_factor (ps);
 
-  bool keep_going = true;
-  while (keep_going)
+  while (true)
     {
-      switch (ps->tokens[ps->current].type)
+      switch (ps_peek_cur (ps)->type)
         {
         case LT_MINUS:
         case LT_PLUS:
@@ -149,12 +140,9 @@ ps_term (struct ps *ps)
           }
           break;
         default:
-          keep_going = false;
-          break;
+          return e;
         }
     }
-
-  return e;
 }
 
 /**
@@ -165,10 +153,9 @@ ps_factor (struct ps *ps)
 {
   union expr *e = ps_unary (ps);
 
-  bool keep_going = true;
-  while (keep_going)
+  while (true)
     {
-      switch (ps->tokens[ps->current].type)
+      switch (ps_peek_cur (ps)->type)
         {
         case LT_SLASH:
         case LT_STAR:
@@ -186,12 +173,9 @@ ps_factor (struct ps *ps)
           }
           break;
         default:
-          keep_going = false;
-          break;
+          return e;
         }
     }
-
-  return e;
 }
 
 /**
@@ -201,10 +185,9 @@ ps_factor (struct ps *ps)
 union expr *
 ps_unary (struct ps *ps)
 {
-  bool keep_going = true;
-  while (keep_going)
+  while (true)
     {
-      switch (ps->tokens[ps->current].type)
+      switch (ps_peek_cur (ps)->type)
         {
         case LT_BANG:
         case LT_MINUS:
@@ -221,12 +204,9 @@ ps_unary (struct ps *ps)
           }
           break;
         default:
-          keep_going = false;
-          break;
+          return ps_primary (ps);
         }
     }
-
-  return ps_primary (ps);
 }
 
 /**
