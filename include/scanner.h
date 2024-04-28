@@ -22,6 +22,7 @@ struct sc
 struct sc sc_get_scanner (const char *source);
 struct token *sc_scan_tokens (struct sc *sc);
 
+void sc_print_tokens (const struct sc *sc);
 void sc_free_tokens (struct sc *sc);
 
 #endif /* LOX_SCANNER_H */

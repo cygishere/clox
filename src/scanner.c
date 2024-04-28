@@ -66,7 +66,6 @@ void
 sc_scan_token (struct sc *sc)
 {
   char c = sc_advance (sc);
-  printf ("scanning ... %ld: %c\n", sc->current, c);
   switch (c)
     {
     case '(':
@@ -188,7 +187,7 @@ sc_add_token (struct sc *sc, enum token_type type, void *literal)
 }
 
 void
-sc_free_tokens (struct sc *sc)
+sc_print_tokens (const struct sc *sc)
 {
   for (size_t i = 0; i < sc->num_tokens; ++i)
     {
@@ -224,7 +223,11 @@ sc_free_tokens (struct sc *sc)
           break;
         }
     }
+}
 
+void
+sc_free_tokens (struct sc *sc)
+{
   for (size_t i = 0; i < sc->num_tokens; ++i)
     {
       if (NULL != sc->tokens[i].lexeme)
