@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "expr.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -290,7 +289,6 @@ ps_advance (struct ps *ps)
   if (!ps_is_at_end (ps))
     {
       ps->current++;
-      puts (">> advanced");
     }
   return ps_peek_prev (ps);
 }
@@ -311,4 +309,31 @@ const struct token *
 ps_peek_next (const struct ps *ps)
 {
   return ps->tokens + ps->current + 1;
+}
+
+void
+ps_free_expr (union expr *e)
+{
+  switch (e->type)
+    {
+    case LE_BINARY:
+      ps_free_expr (e->binary.left);
+      ps_free_expr (e->binary.right);
+      free (e);
+      break;
+    case LE_GROUPING:
+      ps_free_expr (e->grouping.expr);
+      free (e);
+      break;
+    case LE_LITERAL:
+      free (e);
+      break;
+    case LE_UNARY:
+      ps_free_expr (e->unary.right);
+      free (e);
+      break;
+    default:
+      puts ("Come on, I do not know this expr type");
+      break;
+    }
 }
