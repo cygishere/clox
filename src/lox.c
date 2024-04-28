@@ -101,10 +101,16 @@ lox_run (const char *source)
   struct ps ps = ps_get_parser (sc.tokens);
   union expr *e = ps_expression (&ps);
 
+  puts ("Token list:");
+  sc_print_tokens (&sc);
+  puts ("");
+
+  puts ("Lisp style ast:");
   ast_print (e, stdout);
   puts ("");
 
   sc_free_tokens (&sc);
+  ps_free_expr (e);
 }
 
 void
