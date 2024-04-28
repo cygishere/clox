@@ -24,7 +24,9 @@ add_executable(
   clox
   src/lox.c
   src/token.c
-  src/scanner.c)
+  src/scanner.c
+  src/parser.c
+  src/ast_print.c)
 
 target_include_directories(
   clox

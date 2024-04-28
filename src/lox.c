@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ast_print.h"
 #include "lox.h"
+#include "parser.h"
 #include "scanner.h"
 
 #define LOX_BUF_SIZE 256
@@ -95,6 +97,13 @@ lox_run (const char *source)
 {
   struct sc sc = sc_get_scanner (source);
   sc_scan_tokens (&sc);
+
+  struct ps ps = ps_get_parser (sc.tokens);
+  union expr *e = ps_expression (&ps);
+
+  ast_print (e, stdout);
+  puts ("");
+
   sc_free_tokens (&sc);
 }
 
