@@ -15,7 +15,7 @@ struct expr_binary
 {
   enum expr_type type;
   union expr *left;
-  struct token *operator;
+  const struct token *operator;
   union expr *right;
 };
 
@@ -28,13 +28,13 @@ struct expr_grouping
 struct expr_literal
 {
   enum expr_type type;
-  struct token *value;
+  const struct token *value;
 };
 
 struct expr_unary
 {
   enum expr_type type;
-  struct token *operator;
+  const struct token *operator;
   union expr *right;
 };
 
