@@ -1,7 +1,7 @@
 #include "scanner.h"
 #include "hash.h"
 #include "lox.h"
-#include "token_type.h"
+#include "toktype.h"
 
 #include <errno.h>
 #include <stdbool.h>

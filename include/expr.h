@@ -1,7 +1,7 @@
 #ifndef LOX_EXPR_H
 #define LOX_EXPR_H
 
-#include "token.h"
+#include "tok.h"
 
 enum expr_type
 {

@@ -1,7 +1,7 @@
 #ifndef LOX_TOKEN_H
 #define LOX_TOKEN_H
 
-#include "token_type.h"
+#include "toktype.h"
 
 struct token
 {

@@ -1,5 +1,5 @@
-#include "ast_print.h"
-#include "token.h"
+#include "astprint.h"
+#include "tok.h"
 
 #include <stddef.h>
 #include <stdio.h>

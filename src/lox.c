@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ast_print.h"
+#include "astprint.h"
 #include "lox.h"
 #include "parser.h"
 #include "scanner.h"

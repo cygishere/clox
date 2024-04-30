@@ -1,4 +1,4 @@
-#include "token.h"
+#include "tok.h"
 
 #include <assert.h>
 #include <stdlib.h>

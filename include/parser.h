@@ -2,7 +2,7 @@
 #define LOX_PARSER_H
 
 #include "expr.h"
-#include "token.h"
+#include "tok.h"
 
 #include <stddef.h>
 

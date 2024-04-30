@@ -1,7 +1,7 @@
 #ifndef LOX_SCANNER_H
 #define LOX_SCANNER_H
 
-#include "token.h"
+#include "tok.h"
 
 #include <stddef.h>
 
