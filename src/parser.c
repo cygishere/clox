@@ -22,11 +22,11 @@ static union expr *ps_factor (struct ps *ps);
 static union expr *ps_unary (struct ps *ps);
 static union expr *ps_primary (struct ps *ps);
 
-static bool ps_is_at_end (const struct ps *ps);
-static const struct token *ps_advance (struct ps *ps);
-static const struct token *ps_peek_cur (const struct ps *ps);
-static const struct token *ps_peek_prev (const struct ps *ps);
-static const struct token *ps_peek_next (const struct ps *ps);
+static inline bool ps_is_at_end (const struct ps *ps);
+static inline const struct token *ps_advance (struct ps *ps);
+static inline const struct token *ps_peek_cur (const struct ps *ps);
+static inline const struct token *ps_peek_prev (const struct ps *ps);
+static inline const struct token *ps_peek_next (const struct ps *ps);
 
 struct ps
 ps_get_parser (const struct token *tokens)
