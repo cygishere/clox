@@ -1,2 +1,43 @@
+# clox
+/clox
+/clox-*.tar.gz
+/clox-*/
 .cache
 compile_commands.json
+
+# c files
+*.o
+
+# Below are copied from https://github.com/github/gitignore/blob/main/Autotools.gitignore
+
+# http://www.gnu.org/software/automake
+Makefile.in
+.deps/
+.dirstamp
+
+# http://www.gnu.org/software/autoconf
+autom4te.cache
+/autoscan.log
+/aclocal.m4
+/compile
+/config.guess
+/config.h.in
+/config.h.in~
+/config.h
+/config.log
+/config.status
+/config.sub
+/configure
+/configure~
+/configure.ac~
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+
+# Generated Makefile
+# (meta build system like autotools,
+# can automatically generate from config.status script
+# (which is called by configure script))
+Makefile
