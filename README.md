@@ -26,7 +26,7 @@ cd your_build_dir
 
 ### Using CMake
 
-Make sure you have cmake and c compiler suite installed.
+Make sure you have `cmake` and c compiler suite installed.
 
 ```shell
 cmake your_source_dir/clox
@@ -35,7 +35,7 @@ cmake --build .
 
 ### Using Autotools
 
-Make sure you have autoconf and c compiler suite installed.
+Make sure you have `autoconf` and c compiler suite installed.
 
 ```shell
 autoreconf your_source_dir/clox
