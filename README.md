@@ -1,12 +1,12 @@
 # clox - A Lox Implementation in C
 
-## Description
-🚧 Work in Progress 🚧
 
-This is an educational project aimed at learning interpreter development, following the book [[https://craftinginterpreters.com][Crafting Interpreters]].
+## Description
+🚧 **Work in Progress** 🚧
+This is an educational project aimed at learning interpreter development, following the book [Crafting Interpreters](https://craftinginterpreters.com).
 
 ## Usage
-``` console
+```shell
 $ clox [lox_source_file]
 ```
 
@@ -14,7 +14,7 @@ $ clox [lox_source_file]
 
 ### Using CMake
 Make sure you have git, cmake, and c compile suite installed.
-``` console
+```shell
 $ cd your_source_dir
 $ git clone https://github.com/cygishere/clox.git
 $ mkdir your_build_dir
