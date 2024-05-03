@@ -10,20 +10,34 @@ This is an educational project aimed at learning interpreter development, follow
 ## Usage
 
 ```shell
-$ clox [lox_source_file]
+clox [lox_source_file]
 ```
 
-## How to Build
+## How to Build from Repo
+
+Clone this repo and make a build directory.
+
+```shell
+cd your_source_dir
+git clone https://github.com/cygishere/clox.git
+mkdir your_build_dir
+cd your_build_dir
+```
 
 ### Using CMake
 
-Make sure you have git, cmake, and c compile suite installed.
+Make sure you have cmake and c compiler suite installed.
 
 ```shell
-$ cd your_source_dir
-$ git clone https://github.com/cygishere/clox.git
-$ mkdir your_build_dir
-$ cd your_build_dir
-$ cmake your_source_dir/clox
-$ cmake --build .
+cmake your_source_dir/clox
+cmake --build .
+```
+
+### Using Autotools
+
+Make sure you have autoconf and c compiler suite installed.
+
+```shell
+autoreconf your_source_dir/clox
+./configure && make
 ```
