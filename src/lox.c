@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -45,6 +46,7 @@ lox_run_file (const char *filename)
 
   fseek (file, 0, SEEK_END);
   long fsize = ftell (file);
+  assert (fsize >= 0 && "How can fsize not >= 0?");
   rewind (file);
 
   char *buf = malloc (fsize);
@@ -55,7 +57,7 @@ lox_run_file (const char *filename)
     }
 
   size_t bytes_read = fread (buf, 1, fsize, file);
-  if (bytes_read != fsize)
+  if (bytes_read != (size_t)fsize)
     {
       fprintf (stderr, "Failed to read file %s\n", filename);
       goto fail_fread;
