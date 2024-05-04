@@ -1,5 +1,6 @@
 AC_PREREQ([2.72])
-AC_INIT([clox],[0.1],[https://github.com/cygishere/clox])
+AC_INIT([clox], [0.1], [https://github.com/cygishere/clox/issues], [clox], [https://github.com/cygishere/clox])
+
 AC_CONFIG_SRCDIR([src/lox.c])
 AC_CONFIG_HEADERS([config.h])
 
